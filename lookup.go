@@ -14,7 +14,7 @@ type LookupRes struct {
 }
 
 func (a *App) Lookup(phrase string, sex Sex) (*LookupRes, error) {
-	if !sex.IsValid() {
+	if sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
 	url := "lookup?phrase=" + phrase + "&sex=" + sex.String()
@@ -30,6 +30,12 @@ func (a *App) Lookup(phrase string, sex Sex) (*LookupRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := LookupRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

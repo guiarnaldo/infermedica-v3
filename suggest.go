@@ -11,7 +11,7 @@ import (
 // SuggestReq is a struct to request suggestions
 type SuggestReq struct {
 	Sex       Sex        `json:"sex"`
-	Age       int        `json:"age"`
+	Age       Age        `json:"age"`
 	Evidences []Evidence `json:"evidence"`
 }
 
@@ -24,7 +24,7 @@ type SuggestRes struct {
 
 // Suggest is a func to request suggestions
 func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
-	if !sr.Sex.IsValid() {
+	if sr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "suggest", sr)
@@ -39,6 +39,12 @@ func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := []SuggestRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

@@ -39,6 +39,12 @@ func (a *App) Symptoms() (*[]SymptomRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := []SymptomRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
@@ -70,6 +76,12 @@ func (a *App) SymptomByID(id string) (*SymptomRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := SymptomRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

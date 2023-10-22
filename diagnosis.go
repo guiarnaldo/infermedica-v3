@@ -13,20 +13,13 @@ import (
 // DiagnosisReq is a struct to request diagnosis
 type DiagnosisReq struct {
 	Sex       Sex               `json:"sex"`
-	Age       int               `json:"age"`
+	Age       Age               `json:"age"`
 	Evidences []Evidence        `json:"evidence"`
-	Extras    DiagnosisReqExras `json:"extras"`
+	Extras    DiagnosisReqExtras `json:"extras"`
 }
 
-type DiagnosisReqCovid struct {
-	Sex       Sex               `json:"sex"`
-	Age       int               `json:"age"`
-	Evidences []EvidenceCovid   `json:"evidence"`
-	Extras    DiagnosisReqExras `json:"extras"`
-}
-
-// DiagnosisReqExras contains extra params for DiagnosisReq
-type DiagnosisReqExras struct {
+// DiagnosisReqExtras contains extra params for DiagnosisReq
+type DiagnosisReqExtras struct {
 	DisableGroups bool `json:"disable_groups"`
 }
 
@@ -53,12 +46,12 @@ const (
 func (qt QuestionType) Ptr() *QuestionType { return &qt }
 func (qt QuestionType) String() string     { return string(qt) }
 
-func (qt *QuestionType) IsValid() bool {
+func (qt *QuestionType) IsValid() error {
 	_, err := QuestionTypeFromString(qt.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func QuestionTypeFromString(x string) (QuestionType, error) {
@@ -70,7 +63,7 @@ func QuestionTypeFromString(x string) (QuestionType, error) {
 	case "group_multiple":
 		return QuestionTypeGroupMultiple, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for Question Type: %q", x)
+		return "", fmt.Errorf("unexpected value for Question Type: %q", x)
 	}
 }
 
@@ -102,7 +95,7 @@ type DiagnosisConditionRes struct {
 
 // Diagnosis is a func to request diagnosis for given data
 func (a *App) Diagnosis(dr DiagnosisReq) (*DiagnosisRes, error) {
-	if !dr.Sex.IsValid() {
+	if dr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "diagnosis", dr)
@@ -116,7 +109,21 @@ func (a *App) Diagnosis(dr DiagnosisReq) (*DiagnosisRes, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
+
 	r := DiagnosisRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

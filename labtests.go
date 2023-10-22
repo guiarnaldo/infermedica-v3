@@ -34,6 +34,12 @@ func (a *App) LabTests() (*[]LabTestsRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := []LabTestsRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
@@ -88,7 +94,7 @@ type LabTestsID struct {
 
 // Recommend is a func to request lab test recommendations for given data
 func (a *App) LabTestsRecommend(dr DiagnosisReq) (*LabTestsRecommendRes, error) {
-	if !dr.Sex.IsValid() {
+	if dr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "lab_tests/recommend", dr)

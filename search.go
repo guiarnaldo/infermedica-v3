@@ -34,12 +34,12 @@ const (
 func (s SearchType) Ptr() *SearchType { return &s }
 func (s SearchType) String() string   { return string(s) }
 
-func (s *SearchType) IsValid() bool {
+func (s *SearchType) IsValid() error {
 	_, err := SearchTypeFromString(s.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func SearchTypeFromString(x string) (SearchType, error) {
@@ -51,15 +51,15 @@ func SearchTypeFromString(x string) (SearchType, error) {
 	case "lab_test":
 		return SearchTypeLabTest, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for search type: %q", x)
+		return "", fmt.Errorf("unexpected value for search type: %q", x)
 	}
 }
 
 func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]SearchRes, error) {
-	if !sex.IsValid() {
+	if sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
-	if !st.IsValid() {
+	if st.IsValid() != nil{
 		return nil, errors.New("Unexpected value for search type")
 	}
 	url := "search?phrase=" + url.QueryEscape(phrase) + "&sex=" + sex.String() + "&max_results=" + strconv.Itoa(maxResults) + "&type=" + st.String()
@@ -75,6 +75,12 @@ func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := []SearchRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

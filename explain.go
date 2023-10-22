@@ -8,7 +8,7 @@ import (
 
 type ExplainReq struct {
 	Sex       Sex        `json:"sex"`
-	Age       int        `json:"age"`
+	Age       Age        `json:"age"`
 	Target    string     `json:"target"`
 	Evidences []Evidence `json:"evidence"`
 }
@@ -38,6 +38,12 @@ func (a *App) Explain(er ExplainReq) (*ExplainRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := ExplainRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

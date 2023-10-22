@@ -1,8 +1,5 @@
-module github.com/mydoc-chat/infermedica
+module github.com/guiarnaldo/infermedica-v3
 
-go 1.12
+go 1.21.2
 
-require (
-	github.com/pkg/errors v0.8.1
-	github.com/stretchr/testify v1.3.0
-)
+require github.com/pkg/errors v0.9.1

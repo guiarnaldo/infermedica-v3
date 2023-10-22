@@ -12,7 +12,7 @@ import (
 
 type TriageReq struct {
 	Sex       Sex        `json:"sex"`
-	Age       int        `json:"age"`
+	Age       Age        `json:"age"`
 	Evidences []Evidence `json:"evidence"`
 }
 type TriageRes struct {
@@ -38,12 +38,12 @@ const (
 func (s TriageLevel) Ptr() *TriageLevel { return &s }
 func (s TriageLevel) String() string    { return string(s) }
 
-func (s *TriageLevel) IsValid() bool {
+func (s *TriageLevel) IsValid() error {
 	_, err := TriageLevelFromString(s.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func TriageLevelFromString(x string) (TriageLevel, error) {
@@ -55,12 +55,12 @@ func TriageLevelFromString(x string) (TriageLevel, error) {
 	case "self_care":
 		return TriageLevelSelfCare, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for triage level: %q", x)
+		return "", fmt.Errorf("unexpected value for triage level: %q", x)
 	}
 }
 
 func (a *App) Triage(tr TriageReq) (*TriageRes, error) {
-	if !tr.Sex.IsValid() {
+	if tr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "triage", tr)
@@ -75,6 +75,12 @@ func (a *App) Triage(tr TriageReq) (*TriageRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := TriageRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

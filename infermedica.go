@@ -20,7 +20,7 @@ type App struct {
 
 func NewApp(id, key, model, interviewID string) App {
 	return App{
-		baseURL:     "https://api.infermedica.com/v2/",
+		baseURL:     "https://api.infermedica.com/v3/",
 		appID:       id,
 		appKey:      key,
 		model:       model,
@@ -52,9 +52,6 @@ func (a App) addHeaders(req *http.Request) {
 
 func (a App) prepareGETRequest(url string) (*http.Request, error) {
 	baseURL := a.baseURL
-	if strings.Index(url, "covid19") != -1 {
-		baseURL = strings.ReplaceAll(baseURL, "v2/", "")
-	}
 	req, err := http.NewRequest("GET", baseURL+url, nil)
 	if err != nil {
 		return nil, err
@@ -70,9 +67,6 @@ func (a App) preparePOSTRequest(url string, body interface{}) (*http.Request, er
 		return nil, err
 	}
 	baseURL := a.baseURL
-	if strings.Index(url, "covid19") != -1 {
-		baseURL = strings.ReplaceAll(baseURL, "v2/", "")
-	}
 	req, err := http.NewRequest("POST", baseURL+url, b)
 	if err != nil {
 		return nil, err
@@ -91,12 +85,12 @@ const (
 func (s Sex) Ptr() *Sex      { return &s }
 func (s Sex) String() string { return string(s) }
 
-func (s *Sex) IsValid() bool {
+func (s *Sex) IsValid() error {
 	_, err := SexFromString(s.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func SexFromString(x string) (Sex, error) {
@@ -106,7 +100,7 @@ func SexFromString(x string) (Sex, error) {
 	case "female":
 		return SexFemale, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for Sex: %q", x)
+		return "", fmt.Errorf("unexpected value for Sex: %q", x)
 	}
 }
 
@@ -121,12 +115,12 @@ const (
 func (s SexFilter) Ptr() *SexFilter { return &s }
 func (s SexFilter) String() string  { return string(s) }
 
-func (s *SexFilter) IsValid() bool {
+func (s *SexFilter) IsValid() error {
 	_, err := SexFilterFromString(s.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func SexFilterFromString(x string) (SexFilter, error) {
@@ -138,7 +132,7 @@ func SexFilterFromString(x string) (SexFilter, error) {
 	case "female":
 		return SexFilterFemale, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for SexFilter: %q", x)
+		return "", fmt.Errorf("unexpected value for SexFilter: %q", x)
 	}
 }
 
@@ -153,12 +147,12 @@ const (
 func (ecID EvidenceChoiceID) Ptr() *EvidenceChoiceID { return &ecID }
 func (ecID EvidenceChoiceID) String() string         { return string(ecID) }
 
-func (ecID EvidenceChoiceID) IsValid() bool {
+func (ecID EvidenceChoiceID) IsValid() error {
 	_, err := EvidenceChoiceIDFromString(ecID.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func EvidenceChoiceIDFromString(x string) (EvidenceChoiceID, error) {
@@ -170,17 +164,26 @@ func EvidenceChoiceIDFromString(x string) (EvidenceChoiceID, error) {
 	case "unknown":
 		return EvidenceChoiceIDUnknown, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for evidence choice id: %q", x)
+		return "", fmt.Errorf("unexpected value for evidence choice id: %q", x)
 	}
 }
+
+// Contains source valid types 
+type EvidenceSource string
+
+const (
+	EvidenceSourceInitial EvidenceSource = "initial"
+	EvidenceSourceSuggest  EvidenceSource = "suggest"
+	EvidenceSourcePredefined EvidenceSource = "predefined"
+	EvidenceSourceRedFlags EvidenceSource = "red_flags"
+)
 
 type Evidence struct {
 	ID       string           `json:"id"`
 	ChoiceID EvidenceChoiceID `json:"choice_id"`
-	Initial  bool             `json:"initial"`
+	Source   EvidenceSource   `json:"source"`
 }
 
-type EvidenceCovid struct {
-	ID       string           `json:"id"`
-	ChoiceID EvidenceChoiceID `json:"choice_id"`
+type Age struct{
+	Value int `json:"value"`
 }

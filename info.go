@@ -27,6 +27,12 @@ func (a *App) Info() (*InfoRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := InfoRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

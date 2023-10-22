@@ -20,12 +20,12 @@ const (
 func (p Prevalence) Ptr() *Prevalence { return &p }
 func (p Prevalence) String() string   { return string(p) }
 
-func (p *Prevalence) IsValid() bool {
+func (p *Prevalence) IsValid() error {
 	_, err := PrevalenceFromString(p.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func PrevalenceFromString(x string) (Prevalence, error) {
@@ -39,7 +39,7 @@ func PrevalenceFromString(x string) (Prevalence, error) {
 	case "common":
 		return PrevalenceCommon, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for Prevalence: %q", x)
+		return "", fmt.Errorf("unexpected value for Prevalence: %q", x)
 	}
 }
 
@@ -55,12 +55,12 @@ const (
 func (a Acuteness) Ptr() *Acuteness { return &a }
 func (a Acuteness) String() string  { return string(a) }
 
-func (a *Acuteness) IsValid() bool {
+func (a *Acuteness) IsValid() error {
 	_, err := AcutenessFromString(a.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func AcutenessFromString(x string) (Acuteness, error) {
@@ -74,7 +74,7 @@ func AcutenessFromString(x string) (Acuteness, error) {
 	case "acute":
 		return AcutenessAcute, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for Acuteness: %q", x)
+		return "", fmt.Errorf("unexpected value for Acuteness: %q", x)
 	}
 }
 
@@ -89,12 +89,12 @@ const (
 func (s Severity) Ptr() *Severity { return &s }
 func (s Severity) String() string { return string(s) }
 
-func (s *Severity) IsValid() bool {
+func (s *Severity) IsValid() error {
 	_, err := SeverityFromString(s.String())
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func SeverityFromString(x string) (Severity, error) {
@@ -106,7 +106,7 @@ func SeverityFromString(x string) (Severity, error) {
 	case "severe":
 		return SeveritySevere, nil
 	default:
-		return "", fmt.Errorf("Unexpected value for Severity: %q", x)
+		return "", fmt.Errorf("unexpected value for Severity: %q", x)
 	}
 }
 
@@ -146,6 +146,12 @@ func (a *App) Conditions() (*[]ConditionRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := []ConditionRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
@@ -179,6 +185,12 @@ func (a *App) ConditionByID(id string) (*ConditionRes, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
+	err = checkResponse(res)
+
+	if err != nil{
+		return nil, err
+	}
 	r := ConditionRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
