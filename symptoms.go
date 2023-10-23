@@ -26,8 +26,8 @@ type SymptomChild struct {
 	ParentRelation string `json:"parent_relation"`
 }
 
-func (a *App) Symptoms() (*[]SymptomRes, error) {
-	req, err := a.prepareRequest("GET", "symptoms", nil)
+func (a *App) Symptoms(age *Age) (*[]SymptomRes, error) {
+	req, err := a.prepareRequest("GET", "symptoms", age)
 	if err != nil {
 		return nil, err
 	}
@@ -53,8 +53,8 @@ func (a *App) Symptoms() (*[]SymptomRes, error) {
 	return &r, nil
 }
 
-func (a *App) SymptomsIDMap() (*map[string]SymptomRes, error) {
-	r, err := a.Symptoms()
+func (a *App) SymptomsIDMap(age *Age) (*map[string]SymptomRes, error) {
+	r, err := a.Symptoms(age)
 	if err != nil {
 		return nil, err
 	}
