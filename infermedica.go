@@ -31,7 +31,7 @@ func NewApp(id, key, model, interviewID string) App {
 func (a App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
 	switch method {
 	case "GET":
-		return a.prepareGETRequest(url)
+		return a.prepareGETRequest(url, body)
 	case "POST":
 		return a.preparePOSTRequest(url, body)
 	}
@@ -50,9 +50,14 @@ func (a App) addHeaders(req *http.Request) {
 	}
 }
 
-func (a App) prepareGETRequest(url string) (*http.Request, error) {
+func (a App) prepareGETRequest(url string, body interface{}) (*http.Request, error) {
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(body)
+	if err != nil {
+		return nil, err
+	}
 	baseURL := a.baseURL
-	req, err := http.NewRequest("GET", baseURL+url, nil)
+	req, err := http.NewRequest("GET", baseURL+url, b)
 	if err != nil {
 		return nil, err
 	}

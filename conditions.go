@@ -173,7 +173,7 @@ func (a *App) ConditionsIDMap() (*map[string]ConditionRes, error) {
 }
 
 func (a *App) ConditionByID(id string) (*ConditionRes, error) {
-	req, err := a.prepareGETRequest("conditions/" + id)
+	req, err := a.prepareGETRequest("conditions/" + id, nil)
 	if err != nil {
 		return nil, err
 	}
