@@ -1,24 +1,23 @@
-# Infermedica (unofficial)
+# Infermedica V3 API (unofficial)
+
 Go interface to the infermedica REST API
 
 ## Description
 
-This is a Go interface to the Infermedica REST API: https://developer.infermedica.com/docs/api
+This is a Go interface to the [Infermedica REST API](https://developer.infermedica.com/docs/api), I am just updating [mydoc-chat’s](https://github.com/mydoc-chat/infermedica) repository for my undergraduate thesis, so I don’t know if I’ll include all endpoints in this project.
 
 ## Installation
 
-```go get github.com/torniker/infermedica```
+```go get github.com/guiarnaldo/infermedica-v3```
 
 ## Usage examples
 
-#### Fetching symptoms
+### Fetching symptoms
 ```go
-app := infermedica.NewApp("appid", "appkey", "model")
+app := infermedica.NewApp("appid", "appkey", "model", "source")
 symptoms, err := app.Symptoms()
 if err != nil {
-    log.Errorf("Could not fetch symptoms: %v", err)
+    fmt.Printf("Could not fetch symptoms: %v", err)
 }
-log.Infof("All Symptoms: %v", symptoms)
+fmt.Printf("All Symptoms: %v", symptoms)
 ```
-
-
