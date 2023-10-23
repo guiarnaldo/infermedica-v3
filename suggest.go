@@ -40,11 +40,12 @@ func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
 	}
 	defer res.Body.Close()
 
+	// Check response
 	err = checkResponse(res)
-
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
+
 	r := []SuggestRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

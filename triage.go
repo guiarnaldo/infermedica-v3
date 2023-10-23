@@ -16,14 +16,17 @@ type TriageReq struct {
 	Evidences []Evidence `json:"evidence"`
 }
 type TriageRes struct {
-	TriageLevel TriageLevel `json:"triage_level"`
-	Serious     []Serious   `json:"serious"`
+	TriageLevel                TriageLevel `json:"triage_level"`
+	Serious                    []Serious   `json:"serious"`
+	TeleconsultationApplicable bool        `json:"teleconsultation_applicable"`
+	RootCause                  string      `json:"root_cause"`
 }
 
 type Serious struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	CommonName  string `json:"common_name"`
+	Seriousness string `json:"seriousness"`
 	IsEmergency bool   `json:"is_emergency"`
 }
 
@@ -76,11 +79,12 @@ func (a *App) Triage(tr TriageReq) (*TriageRes, error) {
 	}
 	defer res.Body.Close()
 
+	// Check response 
 	err = checkResponse(res)
-
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
+
 	r := TriageRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

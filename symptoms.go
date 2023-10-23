@@ -26,7 +26,7 @@ type SymptomChild struct {
 	ParentRelation string `json:"parent_relation"`
 }
 
-func (a *App) Symptoms(age *Age) (*[]SymptomRes, error) {
+func (a *App) Symptoms(age Age) (*[]SymptomRes, error) {
 	req, err := a.prepareRequest("GET", "symptoms", age)
 	if err != nil {
 		return nil, err
@@ -40,11 +40,12 @@ func (a *App) Symptoms(age *Age) (*[]SymptomRes, error) {
 	}
 	defer res.Body.Close()
 
+	// Check response
 	err = checkResponse(res)
-
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
+
 	r := []SymptomRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
@@ -53,7 +54,7 @@ func (a *App) Symptoms(age *Age) (*[]SymptomRes, error) {
 	return &r, nil
 }
 
-func (a *App) SymptomsIDMap(age *Age) (*map[string]SymptomRes, error) {
+func (a *App) SymptomsIDMap(age Age) (*map[string]SymptomRes, error) {
 	r, err := a.Symptoms(age)
 	if err != nil {
 		return nil, err
@@ -77,11 +78,12 @@ func (a *App) SymptomByID(id string) (*SymptomRes, error) {
 	}
 	defer res.Body.Close()
 
+	// Check response
 	err = checkResponse(res)
-
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
+
 	r := SymptomRes{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {

@@ -5,6 +5,23 @@ Go interface to the infermedica REST API
 
 This is a Go interface to the Infermedica REST API: https://developer.infermedica.com/docs/api
 
+## Current working
+
+- [ ] Conditions
+- [X] Diagnosis
+- [ ] Explain
+- [ ] Httpresponse
+- [ ] Info
+- [ ] Labtests
+- [ ] License
+- [ ] Lookup
+- [ ] Parse
+- [ ] Riskfactors
+- [ ] Search
+- [ ] Suggest
+- [ ] Symptoms
+- [X] Triage
+
 ## Installation
 
 ```go get github.com/torniker/infermedica```
