@@ -10,17 +10,28 @@ import (
 
 // SuggestReq is a struct to request suggestions
 type SuggestReq struct {
-	Sex       Sex        `json:"sex"`
-	Age       Age        `json:"age"`
-	Evidences []Evidence `json:"evidence"`
+	Sex           Sex           `json:"sex"`
+	Age           Age           `json:"age"`
+	Evidences     []Evidence    `json:"evidence"`
+	SuggestMethod SuggestMethod `json:"suggest_method"`
 }
 
 // SuggestRes is a response struct for suggest
-type SuggestRes struct {
+type SuggestRes []struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
 	CommonName string `json:"common_name"`
 }
+
+type SuggestMethod string
+
+const (
+	SuggestMethodSymptoms                 SuggestMethod = "symptoms"                    //Similar symptoms (default)
+	SuggestMethodRiskFactors              SuggestMethod = "risk_factors"                //Relevant risk factors. This method was deprecated with the release of API 3.5
+	SuggestMethoddemoGraphicRiskFactors   SuggestMethod = "demographic_risk_factors"    //Demographic risk factors
+	SuggestMethodEvidenceBasedRiskFactors SuggestMethod = "evidence_based_risk_factors" // Evidence-based risk factors
+	SuggestMethodRedFlags                 SuggestMethod = "red_flags"                   // Red flags
+)
 
 // Suggest is a func to request suggestions
 func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
