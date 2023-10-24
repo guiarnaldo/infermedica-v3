@@ -31,7 +31,7 @@ func NewApp(id, key, model, interviewID string) App {
 func (a App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
 	switch method {
 	case "GET":
-		return a.prepareGETRequest(url, body)
+		return a.prepareGETRequest(url)
 	case "POST":
 		return a.preparePOSTRequest(url, body)
 	}
@@ -50,14 +50,9 @@ func (a App) addHeaders(req *http.Request) {
 	}
 }
 
-func (a App) prepareGETRequest(url string, body interface{}) (*http.Request, error) {
-	b := new(bytes.Buffer)
-	err := json.NewEncoder(b).Encode(body)
-	if err != nil {
-		return nil, err
-	}
+func (a App) prepareGETRequest(url string) (*http.Request, error) {
 	baseURL := a.baseURL
-	req, err := http.NewRequest("GET", baseURL+url, b)
+	req, err := http.NewRequest("GET", baseURL+url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -173,14 +168,14 @@ func EvidenceChoiceIDFromString(x string) (EvidenceChoiceID, error) {
 	}
 }
 
-// Contains source valid types 
+// Contains source valid types
 type EvidenceSource string
 
 const (
-	EvidenceSourceInitial EvidenceSource = "initial"
-	EvidenceSourceSuggest  EvidenceSource = "suggest"
+	EvidenceSourceInitial    EvidenceSource = "initial"
+	EvidenceSourceSuggest    EvidenceSource = "suggest"
 	EvidenceSourcePredefined EvidenceSource = "predefined"
-	EvidenceSourceRedFlags EvidenceSource = "red_flags"
+	EvidenceSourceRedFlags   EvidenceSource = "red_flags"
 )
 
 type Evidence struct {
@@ -189,6 +184,6 @@ type Evidence struct {
 	Source   EvidenceSource   `json:"source"`
 }
 
-type Age struct{
+type Age struct {
 	Value int `json:"value"`
 }

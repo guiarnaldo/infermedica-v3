@@ -79,7 +79,7 @@ func (a *App) Triage(tr TriageReq) (*TriageRes, error) {
 	}
 	defer res.Body.Close()
 
-	// Check response 
+	// Check response
 	err = checkResponse(res)
 	if err != nil {
 		return nil, err

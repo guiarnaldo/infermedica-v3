@@ -110,31 +110,23 @@ func SeverityFromString(x string) (Severity, error) {
 	}
 }
 
-type Condition struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	CommonName string `json:"common_name"`
-	ICD10Code  string `json:"icd10_code"`
-}
-
 type ConditionRes struct {
-	Condition
-	SexFilter   SexFilter       `json:"sex_filter"`
-	Categories  []string        `json:"categories"`
-	Prevalence  Prevalence      `json:"prevalence"`
-	Acuteness   Acuteness       `json:"acuteness"`
-	Severity    Severity        `json:"severity"`
-	Extras      ConditionExtras `json:"extras"`
-	TriageLevel string          `json:"triage_level"`
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	CommonName string   `json:"common_name"`
+	SexFilter  string   `json:"sex_filter"`
+	Categories []string `json:"categories"`
+	Prevalence string   `json:"prevalence"`
+	Acuteness  string   `json:"acuteness"`
+	Severity   string   `json:"severity"`
+	Extras     struct {
+		Hint      string `json:"hint"`
+		Icd10Code string `json:"icd10_code"`
+	} `json:"extras"`
 }
 
-type ConditionExtras struct {
-	Hint      string `json:"hint"`
-	ICD10Code string `json:"icd10_code"`
-}
-
-func (a *App) Conditions() (*[]ConditionRes, error) {
-	req, err := a.prepareRequest("GET", "conditions", nil)
+func (a *App) Conditions(age int32) (*[]ConditionRes, error) {
+	req, err := a.prepareRequest("GET", "conditions?age.value="+string(age), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +141,7 @@ func (a *App) Conditions() (*[]ConditionRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := []ConditionRes{}
@@ -160,8 +152,8 @@ func (a *App) Conditions() (*[]ConditionRes, error) {
 	return &r, nil
 }
 
-func (a *App) ConditionsIDMap() (*map[string]ConditionRes, error) {
-	r, err := a.Conditions()
+func (a *App) ConditionsIDMap(age int32) (*map[string]ConditionRes, error) {
+	r, err := a.Conditions(age)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +165,7 @@ func (a *App) ConditionsIDMap() (*map[string]ConditionRes, error) {
 }
 
 func (a *App) ConditionByID(id string) (*ConditionRes, error) {
-	req, err := a.prepareGETRequest("conditions/" + id, nil)
+	req, err := a.prepareGETRequest("conditions/" + id)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +180,7 @@ func (a *App) ConditionByID(id string) (*ConditionRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := ConditionRes{}

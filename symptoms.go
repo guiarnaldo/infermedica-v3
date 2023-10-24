@@ -7,18 +7,20 @@ import (
 )
 
 type SymptomRes struct {
-	ID             string         `json:"id"`
-	Name           string         `json:"name"`
-	CommonName     string         `json:"common_name"`
-	Category       string         `json:"category"`
-	Seriousness    string         `json:"seriousness"`
-	Children       []SymptomChild `json:"children"`
-	ImageURL       string         `json:"image_url"`
-	ImageSource    string         `json:"image_source"`
-	ParentID       string         `json:"parent_id"`
-	ParentRelation string         `json:"parent_relation"`
-	Question       string         `json:"question"`
-	SexFilter      SexFilter      `json:"sex_filter"`
+	ID                  string         `json:"id"`
+	Name                string         `json:"name"`
+	CommonName          string         `json:"common_name"`
+	Category            string         `json:"category"`
+	Seriousness         string         `json:"seriousness"`
+	Children            []SymptomChild `json:"children"`
+	ImageURL            string         `json:"image_url"`
+	ImageSource         string         `json:"image_source"`
+	ParentID            string         `json:"parent_id"`
+	ParentRelation      string         `json:"parent_relation"`
+	Question            string         `json:"question"`
+	QuestionThirdPerson string         `json:"question_third_person"`
+	SexFilter           SexFilter      `json:"sex_filter"`
+	Extra               any            `json:"extra"`
 }
 
 type SymptomChild struct {
@@ -26,8 +28,8 @@ type SymptomChild struct {
 	ParentRelation string `json:"parent_relation"`
 }
 
-func (a *App) Symptoms(age Age) (*[]SymptomRes, error) {
-	req, err := a.prepareRequest("GET", "symptoms", age)
+func (a *App) Symptoms(age int32) (*[]SymptomRes, error) {
+	req, err := a.prepareRequest("GET", "symptoms?age.value="+string(age), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +56,7 @@ func (a *App) Symptoms(age Age) (*[]SymptomRes, error) {
 	return &r, nil
 }
 
-func (a *App) SymptomsIDMap(age Age) (*map[string]SymptomRes, error) {
+func (a *App) SymptomsIDMap(age int32) (*map[string]SymptomRes, error) {
 	r, err := a.Symptoms(age)
 	if err != nil {
 		return nil, err

@@ -7,19 +7,20 @@ import (
 )
 
 type RiskFactorRes struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	CommonName  string    `json:"common_name"`
-	SexFilter   SexFilter `json:"sex_filter"`
-	Category    string    `json:"category"`
-	Seriousness string    `json:"seriousness"`
-	ImageURL    string    `json:"image_url"`
-	ImageSource string    `json:"image_source"`
-	Question    string    `json:"question"`
+	ID                  string    `json:"id"`
+	Name                string    `json:"name"`
+	CommonName          string    `json:"common_name"`
+	Question            string    `json:"question"`
+	QuestionThirdPerson string    `json:"question_third_person"`
+	SexFilter           SexFilter `json:"sex_filter"`
+	Category            string    `json:"category"`
+	Extras              any       `json:"extras"`
+	ImageURL            string    `json:"image_url"`
+	ImageSource         string    `json:"image_source"`
 }
 
-func (a *App) RiskFactors() (*[]RiskFactorRes, error) {
-	req, err := a.prepareRequest("GET", "risk_factors", nil)
+func (a *App) RiskFactors(age int32) (*[]RiskFactorRes, error) {
+	req, err := a.prepareRequest("GET", "risk_factors?age.value="+string(age), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +33,7 @@ func (a *App) RiskFactors() (*[]RiskFactorRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := []RiskFactorRes{}
@@ -59,7 +60,7 @@ func (a *App) RiskFactorByID(id string) (*RiskFactorRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := RiskFactorRes{}
