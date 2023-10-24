@@ -3,6 +3,7 @@ package infermedica
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -28,8 +29,8 @@ type SymptomChild struct {
 	ParentRelation string `json:"parent_relation"`
 }
 
-func (a *App) Symptoms(age int32) (*[]SymptomRes, error) {
-	req, err := a.prepareRequest("GET", "symptoms?age.value="+string(age), nil)
+func (a *App) Symptoms(age int) (*[]SymptomRes, error) {
+	req, err := a.prepareRequest("GET", "symptoms?age.value="+strconv.Itoa(age), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func (a *App) Symptoms(age int32) (*[]SymptomRes, error) {
 	return &r, nil
 }
 
-func (a *App) SymptomsIDMap(age int32) (*map[string]SymptomRes, error) {
+func (a *App) SymptomsIDMap(age int) (*map[string]SymptomRes, error) {
 	r, err := a.Symptoms(age)
 	if err != nil {
 		return nil, err

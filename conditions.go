@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -125,8 +126,8 @@ type ConditionRes struct {
 	} `json:"extras"`
 }
 
-func (a *App) Conditions(age int32) (*[]ConditionRes, error) {
-	req, err := a.prepareRequest("GET", "conditions?age.value="+string(age), nil)
+func (a *App) Conditions(age int) (*[]ConditionRes, error) {
+	req, err := a.prepareRequest("GET", "conditions?age.value="+strconv.Itoa(age), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +153,7 @@ func (a *App) Conditions(age int32) (*[]ConditionRes, error) {
 	return &r, nil
 }
 
-func (a *App) ConditionsIDMap(age int32) (*map[string]ConditionRes, error) {
+func (a *App) ConditionsIDMap(age int) (*map[string]ConditionRes, error) {
 	r, err := a.Conditions(age)
 	if err != nil {
 		return nil, err

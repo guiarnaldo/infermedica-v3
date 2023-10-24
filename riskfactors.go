@@ -3,6 +3,7 @@ package infermedica
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -19,8 +20,8 @@ type RiskFactorRes struct {
 	ImageSource         string    `json:"image_source"`
 }
 
-func (a *App) RiskFactors(age int32) (*[]RiskFactorRes, error) {
-	req, err := a.prepareRequest("GET", "risk_factors?age.value="+string(age), nil)
+func (a *App) RiskFactors(age int) (*[]RiskFactorRes, error) {
+	req, err := a.prepareRequest("GET", "risk_factors?age.value="+strconv.Itoa(age), nil)
 	if err != nil {
 		return nil, err
 	}

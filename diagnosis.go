@@ -89,7 +89,12 @@ type QuestionItemChoice struct {
 
 // DiagnosisConditionRes is a response struct for condition + probability
 type DiagnosisConditionRes struct {
-	Condition
+	Condition struct {
+		ID         string `json:"id"`
+		Name       string `json:"name"`
+		CommonName string `json:"common_name"`
+		ICD10Code  string `json:"icd10_code"`
+	} `json:"condition"`
 	Probability float64 `json:"probability"`
 }
 

@@ -8,17 +8,17 @@ This is a Go interface to the [Infermedica REST API](https://developer.infermedi
 
 ## Current working
 
-- [ ] Conditions
+- [X] Conditions
 - [X] Diagnosis
 - [ ] Explain
 - [ ] Info
 - [ ] Labtests
 - [ ] Lookup
 - [ ] Parse
-- [ ] Riskfactors
+- [X] Riskfactors
 - [ ] Search
 - [ ] Suggest
-- [ ] Symptoms
+- [X] Symptoms
 - [X] Triage
 
 ## Installation
