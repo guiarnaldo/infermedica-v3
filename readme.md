@@ -14,7 +14,7 @@ This is a Go interface to the [Infermedica REST API](https://developer.infermedi
 - [ ] Info
 - [ ] Labtests
 - [ ] Lookup
-- [ ] Parse
+- [X] Parse
 - [X] Riskfactors
 - [ ] Search
 - [ ] Suggest

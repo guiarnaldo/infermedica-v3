@@ -8,24 +8,26 @@ import (
 
 type ParseReq struct {
 	Text string `json:"text"`
+	Age Age `json:"age"`
 }
 
 type ParseRes struct {
-	Mentions []Mention `json:"mentions"`
-}
-
-type Mention struct {
-	Orth       string `json:"orth"`
-	Name       string `json:"name"`
-	ID         string `json:"id"`
-	ChoiceID   string `json:"choice_id"`
-	Type       string `json:"type"`
-	CommonName string `json:"common_name"`
+		Mentions []struct {
+			ID         string `json:"id"`
+			Orth       string `json:"orth"`
+			ChoiceID   string `json:"choice_id"`
+			Name       string `json:"name"`
+			CommonName string `json:"common_name"`
+			Type       string `json:"type"`
+		} `json:"mentions"`
+		Obvious bool `json:"obvious"`
 }
 
 func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
+	// Required to use "infermedica-en" model, because NPL is only avaliable in english at the moment
 	model := a.model
 	a.model = ""
+	
 	req, err := a.preparePOSTRequest("parse", pr)
 	if err != nil {
 		return nil, err
