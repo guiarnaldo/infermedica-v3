@@ -58,9 +58,12 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 
 // Converts a Parse Response into an Evidence
 func ParseToEvidence(p *ParseRes) (evidences []Evidence) {
-	for i := range evidences {
-		evidences[i].ChoiceID = EvidenceChoiceID(p.Mentions[i].ChoiceID)
-		evidences[i].ID = p.Mentions[i].ID
+	var e Evidence
+
+	for i := range p.Mentions {
+		e.ChoiceID = EvidenceChoiceID(p.Mentions[i].ChoiceID)
+		e.ID = p.Mentions[i].ID
+		evidences = append(evidences, e)
 	}
 	return
 }

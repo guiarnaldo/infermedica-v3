@@ -25,10 +25,29 @@ type DiagnosisReqExtras struct {
 
 // DiagnosisRes is a response struct for diagnosis
 type DiagnosisRes struct {
-	Question   Question                `json:"question"`
-	Conditions []DiagnosisConditionRes `json:"conditions"`
-	ShouldStop bool                    `json:"should_stop"`
-	Extras     interface{}             `json:"extras"`
+	Question struct {
+		Type  string `json:"type"`
+		Text  string `json:"text"`
+		Items []struct {
+			ID      string `json:"id"`
+			Name    string `json:"name"`
+			Choices []struct {
+				ID    string `json:"id"`
+				Label string `json:"label"`
+			} `json:"choices"`
+		} `json:"items"`
+		Extras struct {
+		} `json:"extras"`
+	} `json:"question"`
+	Conditions []struct {
+		ID          string  `json:"id"`
+		Name        string  `json:"name"`
+		CommonName  string  `json:"common_name"`
+		Probability float64 `json:"probability"`
+	} `json:"conditions"`
+	ShouldStop bool `json:"should_stop"`
+	Extras     struct {
+	} `json:"extras"`
 }
 
 // QuestionType is a list of question types
@@ -85,17 +104,6 @@ type QuestionItem struct {
 type QuestionItemChoice struct {
 	ID    EvidenceChoiceID `json:"id"`
 	Label string           `json:"label"`
-}
-
-// DiagnosisConditionRes is a response struct for condition + probability
-type DiagnosisConditionRes struct {
-	Condition struct {
-		ID         string `json:"id"`
-		Name       string `json:"name"`
-		CommonName string `json:"common_name"`
-		ICD10Code  string `json:"icd10_code"`
-	} `json:"condition"`
-	Probability float64 `json:"probability"`
 }
 
 // Diagnosis is a func to request diagnosis for given data
