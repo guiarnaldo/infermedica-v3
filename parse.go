@@ -8,26 +8,27 @@ import (
 
 type ParseReq struct {
 	Text string `json:"text"`
-	Age Age `json:"age"`
+	Age  Age    `json:"age"`
+	Sex  Sex    `json:"sex,omitempty"`
 }
 
 type ParseRes struct {
-		Mentions []struct {
-			ID         string `json:"id"`
-			Orth       string `json:"orth"`
-			ChoiceID   string `json:"choice_id"`
-			Name       string `json:"name"`
-			CommonName string `json:"common_name"`
-			Type       string `json:"type"`
-		} `json:"mentions"`
-		Obvious bool `json:"obvious"`
+	Mentions []struct {
+		ID         string `json:"id"`
+		Orth       string `json:"orth"`
+		ChoiceID   string `json:"choice_id"`
+		Name       string `json:"name"`
+		CommonName string `json:"common_name"`
+		Type       string `json:"type"`
+	} `json:"mentions"`
+	Obvious bool `json:"obvious"`
 }
 
 func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 	// Required to use "infermedica-en" model, because NPL is only avaliable in english at the moment
 	model := a.model
 	a.model = ""
-	
+
 	req, err := a.preparePOSTRequest("parse", pr)
 	if err != nil {
 		return nil, err
@@ -44,7 +45,7 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := ParseRes{}
@@ -53,4 +54,13 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 		return nil, err
 	}
 	return &r, nil
+}
+
+// Converts a Parse Response into an Evidence
+func ParseToEvidence(p *ParseRes) (evidences []Evidence) {
+	for i := range evidences {
+		evidences[i].ChoiceID = EvidenceChoiceID(p.Mentions[i].ChoiceID)
+		evidences[i].ID = p.Mentions[i].ID
+	}
+	return
 }

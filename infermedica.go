@@ -181,7 +181,7 @@ const (
 type Evidence struct {
 	ID       string           `json:"id"`
 	ChoiceID EvidenceChoiceID `json:"choice_id"`
-	Source   EvidenceSource   `json:"source"`
+	Source   EvidenceSource   `json:"source,omitempty"`
 }
 
 type Age struct {
