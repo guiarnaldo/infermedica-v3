@@ -14,7 +14,7 @@ import (
 type DiagnosisReq struct {
 	Sex         Sex                `json:"sex"`
 	Age         Age                `json:"age"`
-	EvaluatedAt string             `json:"evaluated_at"`
+	EvaluatedAt string             `json:"evaluated_at,omitempty"`
 	Evidences   []Evidence         `json:"evidence"`
 	Extras      DiagnosisReqExtras `json:"extras"`
 }
