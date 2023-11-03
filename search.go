@@ -59,7 +59,7 @@ func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]
 	if sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
-	if st.IsValid() != nil{
+	if st.IsValid() != nil {
 		return nil, errors.New("Unexpected value for search type")
 	}
 	url := "search?phrase=" + url.QueryEscape(phrase) + "&sex=" + sex.String() + "&max_results=" + strconv.Itoa(maxResults) + "&type=" + st.String()
@@ -78,7 +78,7 @@ func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := []SearchRes{}

@@ -10,28 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DiagnosisReq is a struct to request diagnosis
-type DiagnosisReq struct {
-	Sex         Sex                `json:"sex"`
-	Age         Age                `json:"age"`
-	EvaluatedAt string             `json:"evaluated_at,omitempty"`
-	Evidences   []Evidence         `json:"evidence"`
-	Extras      DiagnosisReqExtras `json:"extras"`
-}
-
-// DiagnosisReqExtras contains extra params for DiagnosisReq
-type DiagnosisReqExtras struct {
-	DisableGroups              bool          `json:"disable_groups"`                // Using this option forces diagnosis to return only questions of the single type, disabling those of the group_single and group_multiple types
-	EnableTriage3              bool          `json:"enable_triage_3"`               // Using this option disables the 5-level triage mode that is recommended for all applications
-	InterviewMode              InterviewMode `json:"interview_mode"`                // This option allows you to control the behavior of the question selection algorithm. The interview mode may have an influence on the duration of the interview as well as the sequencing of questions
-	DisableAdaptiveRanking     bool          `json:"disable_adaptive_ranking"`      // When adaptive ranking is enabled, only conditions having sufficient probability will be returned. Additionally, ranking will be limited to 8 conditions. We strongly recommend not disabling this option.
-	EnableExplanations         bool          `json:"enable_explanations"`           // Explanation is optional and not every question/question item will have it
-	EnableThirdPersonQuestions bool          `json:"enable_third_person_questions"` // When this parameter is set to true, each question from diagnosis is returned in third person form
-	IncludeConditionDetails    bool          `json:"include_condition_details"`     // When included in a request, each condition in the output gains an additional section - ConditionDetails
-	DisableIntimateContent     bool          `json:"disable_intimate_content"`      // Gives the possibility of excluding intimate concepts from the response e.g concepts related to sexual activity.
-	EnableSymptomDuration      bool          `json:"enable_symptom_duration"`       // This flag enables questions of the type duration which contain a new field evidence_id
-}
-
 // DiagnosisRes is a response struct for diagnosis
 type DiagnosisRes struct {
 	Question         Question         `json:"question"`
@@ -130,7 +108,7 @@ func QuestionTypeFromString(x string) (QuestionType, error) {
 }
 
 // Diagnosis is a func to request diagnosis for given data
-func (a *App) Diagnosis(dr DiagnosisReq) (*DiagnosisRes, error) {
+func (a *App) Diagnosis(dr ObservationReq) (*DiagnosisRes, error) {
 	if dr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}

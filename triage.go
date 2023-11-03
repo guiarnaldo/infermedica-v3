@@ -10,17 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type TriageReq struct {
-	Sex       Sex        `json:"sex"`
-	Age       Age        `json:"age"`
-	Evidences []Evidence `json:"evidence"`
-}
-
-type TriageReqExtras struct {
-	EnableTriage3         bool `json:"enable_triage_3"`         // Using this option disables the 5-level triage mode that is recommended for all applications
-	EnableSymptomDuration bool `json:"enable_symptom_duration"` // Enables using a duration object for initial evidence
-}
-
 type TriageRes struct {
 	TriageLevel                TriageLevel `json:"triage_level"`                // A classification of the case provided
 	Serious                    []Serious   `json:"serious"`                     // A list of serious observations
@@ -94,7 +83,7 @@ func TriageLevelFromString(x string) (TriageLevel, error) {
 	}
 }
 
-func (a *App) Triage(tr TriageReq) (*TriageRes, error) {
+func (a *App) Triage(tr ObservationReq) (*TriageRes, error) {
 	if tr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}

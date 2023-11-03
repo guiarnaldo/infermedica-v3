@@ -1,6 +1,7 @@
 package infermedica
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -18,4 +19,51 @@ func checkResponse(res *http.Response) error {
 		return fmt.Errorf("%s: %s", res.Status, response.Message)
 	}
 	return nil
+}
+
+func (a App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
+	switch method {
+	case "GET":
+		return a.prepareGETRequest(url)
+	case "POST":
+		return a.preparePOSTRequest(url, body)
+	}
+	return nil, fmt.Errorf("method not allowed")
+}
+
+func (a App) addHeaders(req *http.Request) {
+	req.Header.Add("App-Id", a.appID)
+	req.Header.Add("App-Key", a.appKey)
+	req.Header.Add("Content-Type", "application/json")
+	if a.model != "" {
+		req.Header.Add("Model", a.model)
+	}
+	if a.interviewID != "" {
+		req.Header.Add("Interview-Id", a.interviewID)
+	}
+}
+
+func (a App) prepareGETRequest(url string) (*http.Request, error) {
+	baseURL := a.baseURL
+	req, err := http.NewRequest("GET", baseURL+url, nil)
+	if err != nil {
+		return nil, err
+	}
+	a.addHeaders(req)
+	return req, nil
+}
+
+func (a App) preparePOSTRequest(url string, body interface{}) (*http.Request, error) {
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(body)
+	if err != nil {
+		return nil, err
+	}
+	baseURL := a.baseURL
+	req, err := http.NewRequest("POST", baseURL+url, b)
+	if err != nil {
+		return nil, err
+	}
+	a.addHeaders(req)
+	return req, nil
 }

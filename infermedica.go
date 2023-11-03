@@ -1,13 +1,8 @@
 package infermedica
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 type App struct {
@@ -26,53 +21,6 @@ func NewApp(id, key, model, interviewID string) App {
 		model:       model,
 		interviewID: interviewID,
 	}
-}
-
-func (a App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
-	switch method {
-	case "GET":
-		return a.prepareGETRequest(url)
-	case "POST":
-		return a.preparePOSTRequest(url, body)
-	}
-	return nil, errors.New("Method not allowed")
-}
-
-func (a App) addHeaders(req *http.Request) {
-	req.Header.Add("App-Id", a.appID)
-	req.Header.Add("App-Key", a.appKey)
-	req.Header.Add("Content-Type", "application/json")
-	if a.model != "" {
-		req.Header.Add("Model", a.model)
-	}
-	if a.interviewID != "" {
-		req.Header.Add("Interview-Id", a.interviewID)
-	}
-}
-
-func (a App) prepareGETRequest(url string) (*http.Request, error) {
-	baseURL := a.baseURL
-	req, err := http.NewRequest("GET", baseURL+url, nil)
-	if err != nil {
-		return nil, err
-	}
-	a.addHeaders(req)
-	return req, nil
-}
-
-func (a App) preparePOSTRequest(url string, body interface{}) (*http.Request, error) {
-	b := new(bytes.Buffer)
-	err := json.NewEncoder(b).Encode(body)
-	if err != nil {
-		return nil, err
-	}
-	baseURL := a.baseURL
-	req, err := http.NewRequest("POST", baseURL+url, b)
-	if err != nil {
-		return nil, err
-	}
-	a.addHeaders(req)
-	return req, nil
 }
 
 type Sex string
@@ -211,4 +159,26 @@ const (
 type Age struct {
 	Value int     `json:"value"` // Numeric value, this attribute is required
 	Unit  AgeUnit `json:"unit"`  // This attribute is optional and the default value is year
+}
+
+// Base struct for diagnosis, triage and recommend specialist
+type ObservationReq struct {
+	Sex         Sex                  `json:"sex"`
+	Age         Age                  `json:"age"`
+	EvaluatedAt string               `json:"evaluated_at,omitempty"`
+	Evidences   []Evidence           `json:"evidence"`
+	Extras      ObservationReqExtras `json:"extras"`
+}
+
+// Contains extra params for ObservationReq
+type ObservationReqExtras struct {
+	DisableGroups              bool          `json:"disable_groups,omitempty"`      // Using this option forces diagnosis to return only questions of the single type, disabling those of the group_single and group_multiple types
+	EnableTriage3              bool          `json:"enable_triage_3"`               // Using this option disables the 5-level triage mode that is recommended for all applications
+	InterviewMode              InterviewMode `json:"interview_mode"`                // This option allows you to control the behavior of the question selection algorithm. The interview mode may have an influence on the duration of the interview as well as the sequencing of questions
+	DisableAdaptiveRanking     bool          `json:"disable_adaptive_ranking"`      // When adaptive ranking is enabled, only conditions having sufficient probability will be returned. Additionally, ranking will be limited to 8 conditions. We strongly recommend not disabling this option.
+	EnableExplanations         bool          `json:"enable_explanations"`           // Explanation is optional and not every question/question item will have it
+	EnableThirdPersonQuestions bool          `json:"enable_third_person_questions"` // When this parameter is set to true, each question from diagnosis is returned in third person form
+	IncludeConditionDetails    bool          `json:"include_condition_details"`     // When included in a request, each condition in the output gains an additional section - ConditionDetails
+	DisableIntimateContent     bool          `json:"disable_intimate_content"`      // Gives the possibility of excluding intimate concepts from the response e.g concepts related to sexual activity.
+	EnableSymptomDuration      bool          `json:"enable_symptom_duration"`       // This flag enables questions of the type duration which contain a new field evidence_id
 }

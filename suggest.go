@@ -14,13 +14,20 @@ type SuggestReq struct {
 	Age           Age           `json:"age"`
 	Evidences     []Evidence    `json:"evidence"`
 	SuggestMethod SuggestMethod `json:"suggest_method"`
+	Extras        SuggestExtras `json:"extras"`
 }
 
 // SuggestRes is a response struct for suggest
 type SuggestRes []struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	CommonName string `json:"common_name"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	CommonName  string   `json:"common_name"`
+	Explication string   `json:"explication"` // Enabled only when EnableExplanations is true
+	Instruction []string `json:"instruction"` // Enabled only when EnableExplanations is true
+}
+
+type SuggestExtras []struct {
+	EnableExplanations bool `json:"enable_explanations"` // This functionality helps users to better understand the purpose of a question. It expands the question with two additional fields: explication and instruction
 }
 
 type SuggestMethod string

@@ -37,7 +37,7 @@ func (a *App) LabTests() (*[]LabTestsRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	r := []LabTestsRes{}
@@ -93,7 +93,7 @@ type LabTestsID struct {
 }
 
 // Recommend is a func to request lab test recommendations for given data
-func (a *App) LabTestsRecommend(dr DiagnosisReq) (*LabTestsRecommendRes, error) {
+func (a *App) LabTestsRecommend(dr ObservationReq) (*LabTestsRecommendRes, error) {
 	if dr.Sex.IsValid() != nil {
 		return nil, errors.New("Unexpected value for Sex")
 	}
