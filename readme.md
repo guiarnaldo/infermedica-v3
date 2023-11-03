@@ -11,7 +11,9 @@ This is a Go interface to the [Infermedica REST API](https://developer.infermedi
 - [X] Conditions
 - [X] Diagnosis
 - [X] Parse
+- [X] Recommend Specialist
 - [X] Riskfactors
+- [X] Suggest
 - [X] Symptoms
 - [X] Triage
 

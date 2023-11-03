@@ -40,7 +40,7 @@ func PrevalenceFromString(x string) (Prevalence, error) {
 	case "common":
 		return PrevalenceCommon, nil
 	default:
-		return "", fmt.Errorf("unexpected value for Prevalence: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for Prevalence: %q", x)
 	}
 }
 
@@ -75,7 +75,7 @@ func AcutenessFromString(x string) (Acuteness, error) {
 	case "acute":
 		return AcutenessAcute, nil
 	default:
-		return "", fmt.Errorf("unexpected value for Acuteness: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for Acuteness: %q", x)
 	}
 }
 
@@ -107,7 +107,7 @@ func SeverityFromString(x string) (Severity, error) {
 	case "severe":
 		return SeveritySevere, nil
 	default:
-		return "", fmt.Errorf("unexpected value for Severity: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for Severity: %q", x)
 	}
 }
 
@@ -145,7 +145,7 @@ func (a *App) Conditions(age int) (*[]ConditionRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := []ConditionRes{}
+	var r []ConditionRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (a *App) ConditionByID(id string) (*ConditionRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := ConditionRes{}
+	var r ConditionRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

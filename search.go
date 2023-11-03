@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"strconv"
-
-	"github.com/pkg/errors"
 )
 
 type SearchRes struct {
@@ -51,16 +49,16 @@ func SearchTypeFromString(x string) (SearchType, error) {
 	case "lab_test":
 		return SearchTypeLabTest, nil
 	default:
-		return "", fmt.Errorf("unexpected value for search type: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for search type: %q", x)
 	}
 }
 
 func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]SearchRes, error) {
 	if sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	if st.IsValid() != nil {
-		return nil, errors.New("Unexpected value for search type")
+		return nil, fmt.Errorf("infermedica: Unexpected value for search type")
 	}
 	url := "search?phrase=" + url.QueryEscape(phrase) + "&sex=" + sex.String() + "&max_results=" + strconv.Itoa(maxResults) + "&type=" + st.String()
 	req, err := a.prepareRequest("GET", url, nil)
@@ -81,7 +79,7 @@ func (a *App) Search(phrase string, sex Sex, maxResults int, st SearchType) (*[]
 	if err != nil {
 		return nil, err
 	}
-	r := []SearchRes{}
+	var r []SearchRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type TriageRes struct {
@@ -79,13 +77,13 @@ func TriageLevelFromString(x string) (TriageLevel, error) {
 	case "self_care":
 		return TriageLevelSelfCare, nil
 	default:
-		return "", fmt.Errorf("unexpected value for triage level: %q", x)
+		return "", fmt.Errorf("infermedica: Unexpected value for triage level: %q", x)
 	}
 }
 
 func (a *App) Triage(tr ObservationReq) (*TriageRes, error) {
 	if tr.Sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "triage", tr)
 	if err != nil {
@@ -106,7 +104,7 @@ func (a *App) Triage(tr ObservationReq) (*TriageRes, error) {
 		return nil, err
 	}
 
-	r := TriageRes{}
+	var r TriageRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

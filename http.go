@@ -16,7 +16,7 @@ func checkResponse(res *http.Response) error {
 	if res.StatusCode != http.StatusOK {
 		var response Response
 		json.NewDecoder(res.Body).Decode(&response)
-		return fmt.Errorf("%s: %s", res.Status, response.Message)
+		return fmt.Errorf("infermedica: %s: %s", res.Status, response.Message)
 	}
 	return nil
 }
@@ -28,7 +28,7 @@ func (a App) prepareRequest(method, url string, body interface{}) (*http.Request
 	case "POST":
 		return a.preparePOSTRequest(url, body)
 	}
-	return nil, fmt.Errorf("method not allowed")
+	return nil, fmt.Errorf("infermedica: method not allowed")
 }
 
 func (a App) addHeaders(req *http.Request) {

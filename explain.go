@@ -41,10 +41,10 @@ func (a *App) Explain(er ExplainReq) (*ExplainRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
-	r := ExplainRes{}
+	var r ExplainRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

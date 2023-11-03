@@ -48,7 +48,7 @@ func SexFromString(x string) (Sex, error) {
 	case "female":
 		return SexFemale, nil
 	default:
-		return "", fmt.Errorf("unexpected value for Sex: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for Sex: %q", x)
 	}
 }
 
@@ -80,7 +80,7 @@ func SexFilterFromString(x string) (SexFilter, error) {
 	case "female":
 		return SexFilterFemale, nil
 	default:
-		return "", fmt.Errorf("unexpected value for SexFilter: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for SexFilter: %q", x)
 	}
 }
 
@@ -112,7 +112,7 @@ func EvidenceChoiceIDFromString(x string) (EvidenceChoiceID, error) {
 	case "unknown":
 		return EvidenceChoiceIDUnknown, nil
 	default:
-		return "", fmt.Errorf("unexpected value for evidence choice id: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for evidence choice id: %q", x)
 	}
 }
 
@@ -172,13 +172,14 @@ type ObservationReq struct {
 
 // Contains extra params for ObservationReq
 type ObservationReqExtras struct {
-	DisableGroups              bool          `json:"disable_groups,omitempty"`      // Using this option forces diagnosis to return only questions of the single type, disabling those of the group_single and group_multiple types
-	EnableTriage3              bool          `json:"enable_triage_3"`               // Using this option disables the 5-level triage mode that is recommended for all applications
-	InterviewMode              InterviewMode `json:"interview_mode"`                // This option allows you to control the behavior of the question selection algorithm. The interview mode may have an influence on the duration of the interview as well as the sequencing of questions
-	DisableAdaptiveRanking     bool          `json:"disable_adaptive_ranking"`      // When adaptive ranking is enabled, only conditions having sufficient probability will be returned. Additionally, ranking will be limited to 8 conditions. We strongly recommend not disabling this option.
-	EnableExplanations         bool          `json:"enable_explanations"`           // Explanation is optional and not every question/question item will have it
-	EnableThirdPersonQuestions bool          `json:"enable_third_person_questions"` // When this parameter is set to true, each question from diagnosis is returned in third person form
-	IncludeConditionDetails    bool          `json:"include_condition_details"`     // When included in a request, each condition in the output gains an additional section - ConditionDetails
-	DisableIntimateContent     bool          `json:"disable_intimate_content"`      // Gives the possibility of excluding intimate concepts from the response e.g concepts related to sexual activity.
-	EnableSymptomDuration      bool          `json:"enable_symptom_duration"`       // This flag enables questions of the type duration which contain a new field evidence_id
+	DisableGroups              bool              `json:"disable_groups,omitempty"`      // Using this option forces diagnosis to return only questions of the single type, disabling those of the group_single and group_multiple types
+	EnableTriage3              bool              `json:"enable_triage_3"`               // Using this option disables the 5-level triage mode that is recommended for all applications
+	InterviewMode              InterviewMode     `json:"interview_mode"`                // This option allows you to control the behavior of the question selection algorithm. The interview mode may have an influence on the duration of the interview as well as the sequencing of questions
+	DisableAdaptiveRanking     bool              `json:"disable_adaptive_ranking"`      // When adaptive ranking is enabled, only conditions having sufficient probability will be returned. Additionally, ranking will be limited to 8 conditions. We strongly recommend not disabling this option.
+	EnableExplanations         bool              `json:"enable_explanations"`           // Explanation is optional and not every question/question item will have it
+	EnableThirdPersonQuestions bool              `json:"enable_third_person_questions"` // When this parameter is set to true, each question from diagnosis is returned in third person form
+	IncludeConditionDetails    bool              `json:"include_condition_details"`     // When included in a request, each condition in the output gains an additional section - ConditionDetails
+	DisableIntimateContent     bool              `json:"disable_intimate_content"`      // Gives the possibility of excluding intimate concepts from the response e.g concepts related to sexual activity.
+	EnableSymptomDuration      bool              `json:"enable_symptom_duration"`       // This flag enables questions of the type duration which contain a new field evidence_id
+	SpecialistMapping          map[string]string `json:"specialist_mapping"`            // The recommend_specialist endpoint allows for the remapping of specified specialties in a many-to-one fashion. This is useful when some specialties are not appropriate for the regional, regulatory, or clinical setting (or unwanted for any other reason)
 }

@@ -2,10 +2,9 @@ package infermedica
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type LabTestsRes struct {
@@ -40,7 +39,7 @@ func (a *App) LabTests() (*[]LabTestsRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := []LabTestsRes{}
+	var r []LabTestsRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err
@@ -70,7 +69,7 @@ func (a *App) LabTestByID(id string) (*LabTestsRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := LabTestsRes{}
+	var r LabTestsRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err
@@ -95,7 +94,7 @@ type LabTestsID struct {
 // Recommend is a func to request lab test recommendations for given data
 func (a *App) LabTestsRecommend(dr ObservationReq) (*LabTestsRecommendRes, error) {
 	if dr.Sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "lab_tests/recommend", dr)
 	if err != nil {
@@ -106,7 +105,7 @@ func (a *App) LabTestsRecommend(dr ObservationReq) (*LabTestsRecommendRes, error
 	if err != nil {
 		return nil, err
 	}
-	r := LabTestsRecommendRes{}
+	var r LabTestsRecommendRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

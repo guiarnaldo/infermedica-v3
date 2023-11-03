@@ -30,10 +30,10 @@ func (a *App) Info() (*InfoRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
-	r := InfoRes{}
+	var r InfoRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

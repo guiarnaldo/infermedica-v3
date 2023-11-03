@@ -48,7 +48,7 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := ParseRes{}
+	var r ParseRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

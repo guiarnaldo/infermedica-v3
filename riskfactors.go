@@ -37,7 +37,7 @@ func (a *App) RiskFactors(age int) (*[]RiskFactorRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := []RiskFactorRes{}
+	var r []RiskFactorRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (a *App) RiskFactorByID(id string) (*RiskFactorRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	r := RiskFactorRes{}
+	var r RiskFactorRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

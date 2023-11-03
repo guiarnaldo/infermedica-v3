@@ -2,10 +2,9 @@ package infermedica
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // SuggestReq is a struct to request suggestions
@@ -17,17 +16,17 @@ type SuggestReq struct {
 	Extras        SuggestExtras `json:"extras"`
 }
 
+type SuggestExtras []struct {
+	EnableExplanations bool `json:"enable_explanations"` // This functionality helps users to better understand the purpose of a question. It expands the question with two additional fields: explication and instruction
+}
+
 // SuggestRes is a response struct for suggest
-type SuggestRes []struct {
+type SuggestRes struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
 	CommonName  string   `json:"common_name"`
 	Explication string   `json:"explication"` // Enabled only when EnableExplanations is true
 	Instruction []string `json:"instruction"` // Enabled only when EnableExplanations is true
-}
-
-type SuggestExtras []struct {
-	EnableExplanations bool `json:"enable_explanations"` // This functionality helps users to better understand the purpose of a question. It expands the question with two additional fields: explication and instruction
 }
 
 type SuggestMethod string
@@ -43,7 +42,7 @@ const (
 // Suggest is a func to request suggestions
 func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
 	if sr.Sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "suggest", sr)
 	if err != nil {
@@ -64,7 +63,7 @@ func (a *App) Suggest(sr SuggestReq) (*[]SuggestRes, error) {
 		return nil, err
 	}
 
-	r := []SuggestRes{}
+	var r []SuggestRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

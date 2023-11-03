@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // DiagnosisRes is a response struct for diagnosis
@@ -103,14 +101,14 @@ func QuestionTypeFromString(x string) (QuestionType, error) {
 	case "duration":
 		return QuestionTypeGroupMultiple, nil
 	default:
-		return "", fmt.Errorf("unexpected value for Question Type: %q", x)
+		return "", fmt.Errorf("infermedica: unexpected value for Question Type: %q", x)
 	}
 }
 
 // Diagnosis is a func to request diagnosis for given data
 func (a *App) Diagnosis(dr ObservationReq) (*DiagnosisRes, error) {
 	if dr.Sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	req, err := a.prepareRequest("POST", "diagnosis", dr)
 	if err != nil {
@@ -131,7 +129,7 @@ func (a *App) Diagnosis(dr ObservationReq) (*DiagnosisRes, error) {
 		return nil, err
 	}
 
-	r := DiagnosisRes{}
+	var r DiagnosisRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err

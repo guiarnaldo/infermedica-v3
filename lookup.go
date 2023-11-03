@@ -2,10 +2,9 @@ package infermedica
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type LookupRes struct {
@@ -15,7 +14,7 @@ type LookupRes struct {
 
 func (a *App) Lookup(phrase string, sex Sex) (*LookupRes, error) {
 	if sex.IsValid() != nil {
-		return nil, errors.New("Unexpected value for Sex")
+		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}
 	url := "lookup?phrase=" + phrase + "&sex=" + sex.String()
 	req, err := a.prepareRequest("GET", url, nil)
@@ -33,10 +32,10 @@ func (a *App) Lookup(phrase string, sex Sex) (*LookupRes, error) {
 
 	err = checkResponse(res)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
-	r := LookupRes{}
+	var r LookupRes
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
 		return nil, err
