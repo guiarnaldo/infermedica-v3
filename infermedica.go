@@ -168,6 +168,15 @@ func EvidenceChoiceIDFromString(x string) (EvidenceChoiceID, error) {
 	}
 }
 
+type DurationUnit string
+
+const (
+	DurationUnitWeek   DurationUnit = "week"
+	DurationUnitDay    DurationUnit = "day"
+	DurationUnitHour   DurationUnit = "hour"
+	DurationUnitMinute DurationUnit = "minute"
+)
+
 // Contains source valid types
 type EvidenceSource string
 
@@ -179,11 +188,27 @@ const (
 )
 
 type Evidence struct {
-	ID       string           `json:"id"`
-	ChoiceID EvidenceChoiceID `json:"choice_id"`
-	Source   EvidenceSource   `json:"source,omitempty"`
+	ID         string           `json:"id"`        // Required
+	ChoiceID   EvidenceChoiceID `json:"choice_id"` // Required
+	ObservedAt string           `json:"observed_at,omitempty"`
+	Source     EvidenceSource   `json:"source,omitempty"`
+	Duration   Duration         `json:"duration,omitempty"` // Required only when EnableSymptomDuration is true
 }
 
+// Required only when EnableSymptomDuration is true
+type Duration struct {
+	Value int          `json:"value,omitempty"`
+	Unit  DurationUnit `json:"unit,omitempty"`
+}
+
+type AgeUnit string
+
+const (
+	AgeUnitYear  AgeUnit = "year"  // Age in years (Default)
+	AgeUnitMonth AgeUnit = "month" // Age in months
+)
+
 type Age struct {
-	Value int `json:"value"`
+	Value int     `json:"value"` // Numeric value, this attribute is required
+	Unit  AgeUnit `json:"unit"`  // This attribute is optional and the default value is year
 }

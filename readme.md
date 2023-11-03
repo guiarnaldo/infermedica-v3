@@ -10,14 +10,8 @@ This is a Go interface to the [Infermedica REST API](https://developer.infermedi
 
 - [X] Conditions
 - [X] Diagnosis
-- [ ] Explain
-- [ ] Info
-- [ ] Labtests
-- [ ] Lookup
 - [X] Parse
 - [X] Riskfactors
-- [ ] Search
-- [ ] Suggest
 - [X] Symptoms
 - [X] Triage
 
