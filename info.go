@@ -7,6 +7,7 @@ import (
 )
 
 type InfoRes struct {
+	ApiVersion       string    `json:"api_version"`
 	UpdatedAt        time.Time `json:"updated_at"`
 	ConditionsCount  int       `json:"conditions_count"`
 	SymptomsCount    int       `json:"symptoms_count"`

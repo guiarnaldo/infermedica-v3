@@ -57,7 +57,7 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 }
 
 // Converts a Parse Response into an Evidence
-func ParseToEvidence(p *ParseRes) (evidences []Evidence) {
+func (p *ParseRes) ParseToEvidence() (evidences []Evidence) {
 	var e Evidence
 
 	for i := range p.Mentions {

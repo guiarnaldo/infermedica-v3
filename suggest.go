@@ -32,9 +32,9 @@ type SuggestRes struct {
 type SuggestMethod string
 
 const (
-	SuggestMethodSymptoms                 SuggestMethod = "symptoms"                    //Similar symptoms (default)
-	SuggestMethodRiskFactors              SuggestMethod = "risk_factors"                //Relevant risk factors. This method was deprecated with the release of API 3.5
-	SuggestMethoddemoGraphicRiskFactors   SuggestMethod = "demographic_risk_factors"    //Demographic risk factors
+	SuggestMethodSymptoms                 SuggestMethod = "symptoms"                    // Similar symptoms (default)
+	SuggestMethodRiskFactors              SuggestMethod = "risk_factors"                // Relevant risk factors. This method was deprecated with the release of API 3.5
+	SuggestMethoddemoGraphicRiskFactors   SuggestMethod = "demographic_risk_factors"    // Demographic risk factors
 	SuggestMethodEvidenceBasedRiskFactors SuggestMethod = "evidence_based_risk_factors" // Evidence-based risk factors
 	SuggestMethodRedFlags                 SuggestMethod = "red_flags"                   // Red flags
 )

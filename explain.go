@@ -7,24 +7,18 @@ import (
 )
 
 type ExplainReq struct {
-	Sex       Sex        `json:"sex"`
-	Age       Age        `json:"age"`
-	Target    string     `json:"target"`
-	Evidences []Evidence `json:"evidence"`
+	ObservationReq
+	Target string `json:"target"` // ID of the condition that you want explained
 }
 
 type ExplainRes struct {
-	SupportingEvidence  []EvidenceItem `json:"supporting_evidence"`
-	ConflictingEvidence []EvidenceItem `json:"conflicting_evidence"`
-	UnconfirmedEvidence []EvidenceItem `json:"unconfirmed_evidence"`
+	SupportingEvidence  []Evidence `json:"supporting_evidence"`
+	ConflictingEvidence []Evidence `json:"conflicting_evidence"`
+	UnconfirmedEvidence []Evidence `json:"unconfirmed_evidence"`
 }
 
-type EvidenceItem struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	CommonName string `json:"common_name"`
-}
-
+// Explain is the endpoint that allows you to see how reported observations are linked with the final list of most probable conditions.
+// For example, you can use this endpoint in the results page to display "reasons for" and "reasons against" particular conditions
 func (a *App) Explain(er ExplainReq) (*ExplainRes, error) {
 	req, err := a.prepareRequest("POST", "explain", er)
 	if err != nil {
