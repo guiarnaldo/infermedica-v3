@@ -9,15 +9,15 @@ import (
 
 // SuggestReq is a struct to request suggestions
 type SuggestReq struct {
-	Sex           Sex           `json:"sex"`
-	Age           Age           `json:"age"`
-	Evidences     []Evidence    `json:"evidence"`
-	SuggestMethod SuggestMethod `json:"suggest_method"`
-	Extras        SuggestExtras `json:"extras"`
+	Sex           Sex            `json:"sex"`
+	Age           Age            `json:"age"`
+	Evidences     []Evidence     `json:"evidence"`
+	SuggestMethod SuggestMethod  `json:"suggest_method"`
+	Extras        *SuggestExtras `json:"extras"`
 }
 
 type SuggestExtras []struct {
-	EnableExplanations bool `json:"enable_explanations"` // This functionality helps users to better understand the purpose of a question. It expands the question with two additional fields: explication and instruction
+	EnableExplanations bool `json:"enable_explanations,omitempty"` // This functionality helps users to better understand the purpose of a question. It expands the question with two additional fields: explication and instruction
 }
 
 // SuggestRes is a response struct for suggest
