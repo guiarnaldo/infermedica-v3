@@ -7,6 +7,19 @@ import (
 	"time"
 )
 
+type RecommendSpecialistReq struct {
+	Sex         Sex                           `json:"sex"`
+	Age         Age                           `json:"age"`
+	EvaluatedAt string                        `json:"evaluated_at,omitempty"`
+	Evidences   []Evidence                    `json:"evidence,omitempty"`
+	Extras      *RecommendSpecialistReqExtras `json:"extras,omitempty"`
+}
+
+type RecommendSpecialistReqExtras struct {
+	EnableSymptomDuration bool              `json:"enable_symptom_duration,omitempty"` // This flag enables questions of the type duration which contain a new field EvidenceID
+	SpecialistMapping     map[string]string `json:"specialist_mapping,omitempty"`
+}
+
 type RecommendSpecialistRes struct {
 	RecommendedSpecialist struct {
 		Id   string `json:"id"`
@@ -18,13 +31,13 @@ type RecommendSpecialistRes struct {
 type RecommendedChannel string
 
 const (
-	RecommendedChannelPersonalVisit         RecommendedChannel = "personal_visit"         // Personal visit (In-person visit)
-	RecommendedChannelVideoTeleconsultation RecommendedChannel = "video_teleconsultation" // Video teleconsultation (Video consultation)
-	RecommendedChannelAudioTeleconsultation RecommendedChannel = "audio_teleconsultation" // Audio teleconsultation (Telephone or any other consultation with audio only)
-	RecommendedChannelTextTeleconsultation  RecommendedChannel = "text_teleconsultation"  // Text teleconsultation (Chat)
+	RecommendedChannelPersonalVisit         RecommendedChannel = "personal_visit"
+	RecommendedChannelVideoTeleconsultation RecommendedChannel = "video_teleconsultation"
+	RecommendedChannelAudioTeleconsultation RecommendedChannel = "audio_teleconsultation"
+	RecommendedChannelTextTeleconsultation  RecommendedChannel = "text_teleconsultation"
 )
 
-func (a *App) RecommendSpecialist(tr ObservationReq) (*RecommendSpecialistRes, error) {
+func (a *App) RecommendSpecialist(tr RecommendSpecialistReq) (*RecommendSpecialistRes, error) {
 	if tr.Sex.IsValid() != nil {
 		return nil, fmt.Errorf("infermedica: unexpected value for Sex")
 	}

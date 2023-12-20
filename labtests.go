@@ -4,8 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
+
+type LabTestsReq struct {
+	Sex         Sex             `json:"sex"`
+	Age         Age             `json:"age"`
+	EvaluatedAt string          `json:"evaluated_at,omitempty"`
+	Evidences   []Evidence      `json:"evidence,omitempty"`
+	Extras      *LabTestsExtras `json:"extras,omitempty"`
+}
+
+type LabTestsExtras struct {
+	EnableSymptomDuration bool `json:"enable_symptom_duration,omitempty"` // This flag enables questions of the type duration which contain a new field EvidenceID
+}
 
 type LabTestsRes struct {
 	ID         string      `json:"id"`
@@ -20,8 +33,8 @@ type LabResult struct {
 	Type string `json:"type"`
 }
 
-func (a *App) LabTests() (*[]LabTestsRes, error) {
-	req, err := a.prepareRequest("GET", "lab_tests", nil)
+func (a *App) LabTests(age Age, enableTriage3 bool) (*[]LabTestsRes, error) {
+	req, err := a.prepareRequest("GET", "lab_tests?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -47,20 +60,8 @@ func (a *App) LabTests() (*[]LabTestsRes, error) {
 	return &r, nil
 }
 
-func (a *App) LabTestsIDMap() (*map[string]LabTestsRes, error) {
-	r, err := a.LabTests()
-	if err != nil {
-		return nil, err
-	}
-	rmap := make(map[string]LabTestsRes)
-	for _, sr := range *r {
-		rmap[sr.ID] = sr
-	}
-	return &rmap, nil
-}
-
-func (a *App) LabTestByID(id string) (*LabTestsRes, error) {
-	req, err := a.prepareRequest("GET", "lab_tests/"+id, nil)
+func (a *App) LabTestByID(id string, age Age, enableTriage3 bool) (*LabTestsRes, error) {
+	req, err := a.prepareRequest("GET", "lab_tests/"+id+"?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +93,7 @@ type LabTestsID struct {
 }
 
 // Recommend is a func to request lab test recommendations for given data
-func (a *App) LabTestsRecommend(dr ObservationReq) (*LabTestsRecommendRes, error) {
+func (a *App) LabTestsRecommend(dr LabTestsReq) (*LabTestsRecommendRes, error) {
 	if dr.Sex.IsValid() != nil {
 		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}

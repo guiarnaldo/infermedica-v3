@@ -8,7 +8,25 @@ import (
 	"time"
 )
 
-// DiagnosisRes is a response struct for diagnosis
+type DiagnosisReq struct {
+	Sex         Sex                 `json:"sex"`
+	Age         Age                 `json:"age"`
+	EvaluatedAt string              `json:"evaluated_at,omitempty"`
+	Evidences   []Evidence          `json:"evidence,omitempty"`
+	Extras      *DiagnosisReqExtras `json:"extras,omitempty"`
+}
+
+type DiagnosisReqExtras struct {
+	EnableTriage3              bool          `json:"enable_triage_3,omitempty"`
+	InterviewMode              InterviewMode `json:"interview_mode,omitempty"`
+	DisableAdaptiveRanking     bool          `json:"disable_adaptive_ranking,omitempty"`
+	EnableExplanations         bool          `json:"enable_explanations,omitempty"`
+	EnableThirdPersonQuestions bool          `json:"enable_third_person_questions,omitempty"`
+	IncludeConditionDetails    bool          `json:"include_condition_details,omitempty"` // When included in a request, each condition in the output gains an additional section - ConditionDetails
+	DisableIntimateContent     bool          `json:"disable_intimate_content,omitempty"`
+	EnableSymptomDuration      bool          `json:"enable_symptom_duration,omitempty"` // This flag enables questions of the type duration which contain a new field EvidenceID
+}
+
 type DiagnosisRes struct {
 	Question         Question         `json:"question"`
 	Conditions       []Conditions     `json:"conditions"`
@@ -69,7 +87,7 @@ const (
 	QuestionTypeSingle        QuestionType = "single"         // QuestionTypeSingle single question
 	QuestionTypeGroupSingle   QuestionType = "group_single"   // QuestionTypeGroupSingle question group
 	QuestionTypeGroupMultiple QuestionType = "group_multiple" // QuestionTypeGroupMultiple multiple question groups
-	QuestionTypeDuration      QuestionType = "duration"       // QuestionTypeDuration only avaliable when EnableSymptomDuration is true
+	QuestionTypeDuration      QuestionType = "duration"       // QuestionTypeDuration only available when EnableSymptomDuration is true
 )
 
 type InterviewMode string
@@ -79,11 +97,8 @@ const (
 	InterviewModeTriage  InterviewMode = "triage"  // suitable for triage applications where duration of the interview is shorter and optimized for the assessment of the correct triage level rather than accuracy of the final list of most probable conditions
 )
 
-func (qt QuestionType) Ptr() *QuestionType { return &qt }
-func (qt QuestionType) String() string     { return string(qt) }
-
 func (qt *QuestionType) IsValid() error {
-	_, err := QuestionTypeFromString(qt.String())
+	_, err := QuestionTypeFromString(string(*qt))
 	if err != nil {
 		return err
 	}
@@ -106,7 +121,7 @@ func QuestionTypeFromString(x string) (QuestionType, error) {
 }
 
 // Diagnosis is a func to request diagnosis for given data
-func (a *App) Diagnosis(dr ObservationReq) (*DiagnosisRes, error) {
+func (a *App) Diagnosis(dr DiagnosisReq) (*DiagnosisRes, error) {
 	if dr.Sex.IsValid() != nil {
 		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}

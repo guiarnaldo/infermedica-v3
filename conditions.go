@@ -18,11 +18,8 @@ const (
 	PrevalenceCommon   Prevalence = "common"
 )
 
-func (p Prevalence) Ptr() *Prevalence { return &p }
-func (p Prevalence) String() string   { return string(p) }
-
 func (p *Prevalence) IsValid() error {
-	_, err := PrevalenceFromString(p.String())
+	_, err := PrevalenceFromString(string(*p))
 	if err != nil {
 		return err
 	}
@@ -53,11 +50,8 @@ const (
 	AcutenessAcute                    Acuteness = "acute"
 )
 
-func (a Acuteness) Ptr() *Acuteness { return &a }
-func (a Acuteness) String() string  { return string(a) }
-
 func (a *Acuteness) IsValid() error {
-	_, err := AcutenessFromString(a.String())
+	_, err := AcutenessFromString(string(*a))
 	if err != nil {
 		return err
 	}
@@ -87,11 +81,8 @@ const (
 	SeveritySevere   Severity = "severe"
 )
 
-func (s Severity) Ptr() *Severity { return &s }
-func (s Severity) String() string { return string(s) }
-
 func (s *Severity) IsValid() error {
-	_, err := SeverityFromString(s.String())
+	_, err := SeverityFromString(string(*s))
 	if err != nil {
 		return err
 	}
@@ -126,8 +117,8 @@ type ConditionRes struct {
 	} `json:"extras"`
 }
 
-func (a *App) Conditions(age int) (*[]ConditionRes, error) {
-	req, err := a.prepareRequest("GET", "conditions?age.value="+strconv.Itoa(age), nil)
+func (a *App) Conditions(age Age, enableTriage3 bool) (*[]ConditionRes, error) {
+	req, err := a.prepareRequest("GET", "conditions?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -153,20 +144,8 @@ func (a *App) Conditions(age int) (*[]ConditionRes, error) {
 	return &r, nil
 }
 
-func (a *App) ConditionsIDMap(age int) (*map[string]ConditionRes, error) {
-	r, err := a.Conditions(age)
-	if err != nil {
-		return nil, err
-	}
-	rmap := make(map[string]ConditionRes)
-	for _, sr := range *r {
-		rmap[sr.ID] = sr
-	}
-	return &rmap, nil
-}
-
-func (a *App) ConditionByID(id string) (*ConditionRes, error) {
-	req, err := a.prepareGETRequest("conditions/" + id)
+func (a *App) ConditionByID(id string, age Age, enableTriage3 bool) (*ConditionRes, error) {
+	req, err := a.prepareGETRequest("conditions/" + id + "?age.value=" + strconv.Itoa(age.Value) + "&age.unit" + string(age.Unit) + "&enableTriage3=" + strconv.FormatBool(enableTriage3))
 	if err != nil {
 		return nil, err
 	}

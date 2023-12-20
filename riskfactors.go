@@ -20,8 +20,8 @@ type RiskFactorRes struct {
 	ImageSource         string    `json:"image_source"`
 }
 
-func (a *App) RiskFactors(age int) (*[]RiskFactorRes, error) {
-	req, err := a.prepareRequest("GET", "risk_factors?age.value="+strconv.Itoa(age), nil)
+func (a *App) RiskFactors(age Age, enableTriage3 bool) (*[]RiskFactorRes, error) {
+	req, err := a.prepareRequest("GET", "risk_factors?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}

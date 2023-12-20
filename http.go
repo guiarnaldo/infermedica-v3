@@ -11,7 +11,7 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-// Check response status, returns an error with the status code if not it is not 200
+// Check response status, returns an error with the status code if it is not 200
 func checkResponse(res *http.Response) error {
 	if res.StatusCode != http.StatusOK {
 		var response Response
@@ -21,7 +21,7 @@ func checkResponse(res *http.Response) error {
 	return nil
 }
 
-func (a App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
+func (a *App) prepareRequest(method, url string, body interface{}) (*http.Request, error) {
 	switch method {
 	case "GET":
 		return a.prepareGETRequest(url)
@@ -31,10 +31,13 @@ func (a App) prepareRequest(method, url string, body interface{}) (*http.Request
 	return nil, fmt.Errorf("infermedica: method not allowed")
 }
 
-func (a App) addHeaders(req *http.Request) {
+func (a *App) addHeaders(req *http.Request) {
 	req.Header.Add("App-Id", a.appID)
 	req.Header.Add("App-Key", a.appKey)
 	req.Header.Add("Content-Type", "application/json")
+	if a.devMode {
+		req.Header.Add("Dev-Mode", "true")
+	}
 	if a.model != "" {
 		req.Header.Add("Model", a.model)
 	}
@@ -43,7 +46,7 @@ func (a App) addHeaders(req *http.Request) {
 	}
 }
 
-func (a App) prepareGETRequest(url string) (*http.Request, error) {
+func (a *App) prepareGETRequest(url string) (*http.Request, error) {
 	baseURL := a.baseURL
 	req, err := http.NewRequest("GET", baseURL+url, nil)
 	if err != nil {
@@ -53,7 +56,7 @@ func (a App) prepareGETRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
-func (a App) preparePOSTRequest(url string, body interface{}) (*http.Request, error) {
+func (a *App) preparePOSTRequest(url string, body interface{}) (*http.Request, error) {
 	b := new(bytes.Buffer)
 	err := json.NewEncoder(b).Encode(body)
 	if err != nil {

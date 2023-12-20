@@ -7,18 +7,31 @@ import (
 )
 
 type ExplainReq struct {
-	ObservationReq
-	Target string `json:"target"` // ID of the condition that you want explained
+	Sex         Sex               `json:"sex"`
+	Age         Age               `json:"age"`
+	EvaluatedAt string            `json:"evaluated_at,omitempty"`
+	Evidences   *[]Evidence       `json:"evidence,omitempty"`
+	Extras      *ExplainReqExtras `json:"extras,omitempty"`
+	Target      string            `json:"target"`
+}
+
+type ExplainReqExtras struct {
+	EnableSymptomDuration bool `json:"enable_symptom_duration,omitempty"` // This flag enables questions of the type duration which contain a new field EvidenceID
+}
+
+type Observations struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	CommonName string `json:"common_name"`
 }
 
 type ExplainRes struct {
-	SupportingEvidence  []Evidence `json:"supporting_evidence"`
-	ConflictingEvidence []Evidence `json:"conflicting_evidence"`
-	UnconfirmedEvidence []Evidence `json:"unconfirmed_evidence"`
+	SupportingEvidence  []Observations `json:"supporting_evidence"`
+	ConflictingEvidence []Observations `json:"conflicting_evidence"`
+	UnconfirmedEvidence []Observations `json:"unconfirmed_evidence"`
 }
 
-// Explain is the endpoint that allows you to see how reported observations are linked with the final list of most probable conditions.
-// For example, you can use this endpoint in the results page to display "reasons for" and "reasons against" particular conditions
+// Explains which evidence impacts the probability of a selected condition appearing in the ranking
 func (a *App) Explain(er ExplainReq) (*ExplainRes, error) {
 	req, err := a.prepareRequest("POST", "explain", er)
 	if err != nil {

@@ -2,14 +2,17 @@ package infermedica
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 )
 
 type ParseReq struct {
-	Text string `json:"text"`
-	Age  Age    `json:"age"`
-	Sex  Sex    `json:"sex,omitempty"`
+	Text            string `json:"text"`
+	Age             Age    `json:"age"`
+	Sex             Sex    `json:"sex,omitempty"`
+	CorrectSpelling bool   `json:"correct_spelling"` // CorrectSpelling default value is true
+	IncludeTokens   bool   `json:"include_tokens"`
 }
 
 type ParseRes struct {
@@ -21,9 +24,11 @@ type ParseRes struct {
 		CommonName string `json:"common_name"`
 		Type       string `json:"type"`
 	} `json:"mentions"`
-	Obvious bool `json:"obvious"`
+	Tokens  []string `json:"tokens"`
+	Obvious bool     `json:"obvious"`
 }
 
+// Parse returns a list of all the mentions of observation found in given text
 func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 	// Required to use "infermedica-en" model, because NPL is only avaliable in english at the moment
 	model := a.model
@@ -57,8 +62,12 @@ func (a *App) Parse(pr ParseReq) (*ParseRes, error) {
 }
 
 // Converts a Parse Response into an Evidence
-func (p *ParseRes) ParseToEvidence() (evidences []Evidence) {
+func (p *ParseRes) ParseToEvidence() (evidences []Evidence, err error) {
 	var e Evidence
+
+	if len(p.Mentions) == 0 {
+		return nil, fmt.Errorf("infermedica: empty mentions")
+	}
 
 	for i := range p.Mentions {
 		e.ChoiceID = EvidenceChoiceID(p.Mentions[i].ChoiceID)

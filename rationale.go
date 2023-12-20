@@ -7,7 +7,18 @@ import (
 	"time"
 )
 
-// RationaleRes is a response struct for Rationale
+type RationaleReq struct {
+	Sex         Sex                 `json:"sex"`
+	Age         Age                 `json:"age"`
+	EvaluatedAt string              `json:"evaluated_at,omitempty"`
+	Evidences   []Evidence          `json:"evidence,omitempty"`
+	Extras      *RationaleReqExtras `json:"extras,omitempty"`
+}
+
+type RationaleReqExtras struct {
+	EnableSymptomDuration bool `json:"enable_symptom_duration,omitempty"` // This flag enables questions of the type duration which contain a new field EvidenceID
+}
+
 type RationaleRes struct {
 	Type              RationaleType       `json:"type"`
 	ObservationParams []ObservationParams `json:"observation_params"`
@@ -36,7 +47,8 @@ const (
 	RationaleTypeR6 RationaleType = "r6" // I'm asking this question to learn more about your observation_params
 )
 
-func (a *App) Rationale(sr ObservationReq) (*[]RationaleRes, error) {
+// Rationale returns the rationale behind the questions that are asked by the system
+func (a *App) Rationale(sr RationaleReq) (*[]RationaleRes, error) {
 	if sr.Sex.IsValid() != nil {
 		return nil, fmt.Errorf("infermedica: Unexpected value for Sex")
 	}

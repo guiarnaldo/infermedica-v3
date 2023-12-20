@@ -11,6 +11,7 @@ type App struct {
 	appKey      string
 	model       string
 	interviewID string
+	devMode     bool
 }
 
 func NewApp(id, key, model, interviewID string) App {
@@ -23,6 +24,15 @@ func NewApp(id, key, model, interviewID string) App {
 	}
 }
 
+// EnableDevMode
+func (a *App) EnableDevMode() {
+	a.devMode = true
+}
+
+func (a *App) DisableDevMode() {
+	a.devMode = false
+}
+
 type Sex string
 
 const (
@@ -30,11 +40,8 @@ const (
 	SexFemale Sex = "female"
 )
 
-func (s Sex) Ptr() *Sex      { return &s }
-func (s Sex) String() string { return string(s) }
-
 func (s *Sex) IsValid() error {
-	_, err := SexFromString(s.String())
+	_, err := SexFromString(string(*s))
 	if err != nil {
 		return err
 	}
@@ -60,11 +67,8 @@ const (
 	SexFilterFemale SexFilter = "female"
 )
 
-func (s SexFilter) Ptr() *SexFilter { return &s }
-func (s SexFilter) String() string  { return string(s) }
-
 func (s *SexFilter) IsValid() error {
-	_, err := SexFilterFromString(s.String())
+	_, err := SexFilterFromString(string(*s))
 	if err != nil {
 		return err
 	}
@@ -92,11 +96,8 @@ const (
 	EvidenceChoiceIDUnknown EvidenceChoiceID = "unknown"
 )
 
-func (ecID EvidenceChoiceID) Ptr() *EvidenceChoiceID { return &ecID }
-func (ecID EvidenceChoiceID) String() string         { return string(ecID) }
-
 func (ecID EvidenceChoiceID) IsValid() error {
-	_, err := EvidenceChoiceIDFromString(ecID.String())
+	_, err := EvidenceChoiceIDFromString(string(ecID))
 	if err != nil {
 		return err
 	}
@@ -143,7 +144,7 @@ type Evidence struct {
 	Duration   *Duration        `json:"duration,omitempty"` // Required only when EnableSymptomDuration is true
 }
 
-// Required only when EnableSymptomDuration is true
+// Duration is required only when EnableSymptomDuration is true
 type Duration struct {
 	Value int          `json:"value,omitempty"`
 	Unit  DurationUnit `json:"unit,omitempty"`
@@ -159,27 +160,4 @@ const (
 type Age struct {
 	Value int     `json:"value"`          // Numeric value, this attribute is required
 	Unit  AgeUnit `json:"unit,omitempty"` // This attribute is optional and the default value is year
-}
-
-// Base struct for diagnosis, triage and recommend specialist
-type ObservationReq struct {
-	Sex         Sex                   `json:"sex"`
-	Age         Age                   `json:"age"`
-	EvaluatedAt string                `json:"evaluated_at,omitempty"`
-	Evidences   []Evidence            `json:"evidence,omitempty"`
-	Extras      *ObservationReqExtras `json:"extras,omitempty"`
-}
-
-// Contains extra params for ObservationReq
-type ObservationReqExtras struct {
-	DisableGroups              bool              `json:"disable_groups,omitempty"`                // Using this option forces diagnosis to return only questions of the single type, disabling those of the group_single and group_multiple types
-	EnableTriage3              bool              `json:"enable_triage_3,omitempty"`               // Using this option disables the 5-level triage mode that is recommended for all applications
-	InterviewMode              InterviewMode     `json:"interview_mode,omitempty"`                // This option allows you to control the behavior of the question selection algorithm. The interview mode may have an influence on the duration of the interview as well as the sequencing of questions
-	DisableAdaptiveRanking     bool              `json:"disable_adaptive_ranking,omitempty"`      // When adaptive ranking is enabled, only conditions having sufficient probability will be returned. Additionally, ranking will be limited to 8 conditions. We strongly recommend not disabling this option.
-	EnableExplanations         bool              `json:"enable_explanations,omitempty"`           // Explanation is optional and not every question/question item will have it
-	EnableThirdPersonQuestions bool              `json:"enable_third_person_questions,omitempty"` // When this parameter is set to true, each question from diagnosis is returned in third person form
-	IncludeConditionDetails    bool              `json:"include_condition_details,omitempty"`     // When included in a request, each condition in the output gains an additional section - ConditionDetails
-	DisableIntimateContent     bool              `json:"disable_intimate_content,omitempty"`      // Gives the possibility of excluding intimate concepts from the response e.g concepts related to sexual activity.
-	EnableSymptomDuration      bool              `json:"enable_symptom_duration,omitempty"`       // This flag enables questions of the type duration which contain a new field evidence_id
-	SpecialistMapping          map[string]string `json:"specialist_mapping,omitempty"`            // The recommend_specialist endpoint allows for the remapping of specified specialties in a many-to-one fashion. This is useful when some specialties are not appropriate for the regional, regulatory, or clinical setting (or unwanted for any other reason)
 }

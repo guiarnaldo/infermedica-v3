@@ -29,8 +29,8 @@ type SymptomChild struct {
 	ParentRelation string `json:"parent_relation"`
 }
 
-func (a *App) Symptoms(age int) (*[]SymptomRes, error) {
-	req, err := a.prepareRequest("GET", "symptoms?age.value="+strconv.Itoa(age), nil)
+func (a *App) Symptoms(age Age, enableTriage3 bool) (*[]SymptomRes, error) {
+	req, err := a.prepareRequest("GET", "symptoms?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -57,20 +57,8 @@ func (a *App) Symptoms(age int) (*[]SymptomRes, error) {
 	return &r, nil
 }
 
-func (a *App) SymptomsIDMap(age int) (*map[string]SymptomRes, error) {
-	r, err := a.Symptoms(age)
-	if err != nil {
-		return nil, err
-	}
-	rmap := make(map[string]SymptomRes)
-	for _, sr := range *r {
-		rmap[sr.ID] = sr
-	}
-	return &rmap, nil
-}
-
-func (a *App) SymptomByID(id string) (*SymptomRes, error) {
-	req, err := a.prepareRequest("GET", "symptoms/"+id, nil)
+func (a *App) SymptomByID(id string, age Age, enableTriage3 bool) (*SymptomRes, error) {
+	req, err := a.prepareRequest("GET", "symptoms/"+id+"?age.value="+strconv.Itoa(age.Value)+"&age.unit"+string(age.Unit)+"&enableTriage3="+strconv.FormatBool(enableTriage3), nil)
 	if err != nil {
 		return nil, err
 	}
